@@ -659,14 +659,54 @@ h3 {
 
 @media (max-width: 760px) {
   #app {
-    padding: 14px 14px calc(96px + env(safe-area-inset-bottom));
+    padding: 0 10px calc(92px + env(safe-area-inset-bottom));
   }
 
-  .topbar,
   .status-panel,
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 18;
+    flex-direction: row;
+    min-height: 40px;
+    margin: 0 -10px 10px;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+    padding: 6px 10px;
+    background: rgba(7, 17, 13, 0.9);
+    box-shadow: none;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .topbar > div:first-child {
+    min-width: 0;
+  }
+
+  h1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toolbar {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .primary-button,
+  .ghost-button {
+    min-height: 30px;
+    padding: 0 9px;
+    font-size: 0.75rem;
+    white-space: nowrap;
   }
 
   .groups-grid {
@@ -688,11 +728,39 @@ h3 {
     display: none;
   }
 
-  .bracket-scroll {
-    padding: 12px;
+  .bracket-section .section-heading {
+    display: none;
   }
 
-  .bracket-stage[data-game-count="8"] .stage-games,
+  .bracket-scroll {
+    padding: 8px;
+  }
+
+  .bracket-band {
+    padding-top: 0;
+  }
+
+  .band-title {
+    margin-bottom: 8px;
+  }
+
+  .bracket-band-lower .band-title {
+    margin-top: 8px;
+  }
+
+  .bracket-stage {
+    gap: 7px;
+  }
+
+  .stage-games {
+    gap: 7px;
+  }
+
+  .bracket-stage[data-game-count="8"] .stage-games {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
   .bracket-stage[data-game-count="4"] .stage-games {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
@@ -709,6 +777,48 @@ h3 {
 
   .route-connector::after {
     width: 42%;
+  }
+
+  .bracket-stage[data-game-count="8"] .match-card {
+    min-height: 88px;
+    padding: 7px;
+  }
+
+  .bracket-stage[data-game-count="4"] .match-card {
+    min-height: 88px;
+    padding: 7px;
+  }
+
+  .bracket-stage[data-game-count="8"] .match-meta,
+  .bracket-stage[data-game-count="4"] .match-meta {
+    margin-bottom: 5px;
+    font-size: 0.66rem;
+  }
+
+  .bracket-stage[data-game-count="8"] .match-team,
+  .bracket-stage[data-game-count="4"] .match-team {
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 5px;
+    min-height: 28px;
+    padding: 5px;
+  }
+
+  .bracket-stage[data-game-count="8"] .match-team em,
+  .bracket-stage[data-game-count="4"] .match-team em {
+    display: none;
+  }
+
+  .bracket-stage[data-game-count="8"] .flag-emoji,
+  .bracket-stage[data-game-count="4"] .flag-emoji {
+    width: 22px;
+    height: 20px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+  }
+
+  .final-band {
+    margin: 14px 0 12px;
+    padding: 16px 0;
   }
 
   #app[data-mobile-panel="groups"] .bracket-section {
@@ -741,8 +851,6 @@ h3 {
 }
 
 @media (max-width: 520px) {
-  .bracket-stage[data-game-count="8"] .stage-games,
-  .bracket-stage[data-game-count="4"] .stage-games,
   .bracket-stage[data-game-count="2"] .stage-games,
   .bracket-stage[data-game-count="1"] .stage-games {
     grid-template-columns: minmax(0, 1fr);

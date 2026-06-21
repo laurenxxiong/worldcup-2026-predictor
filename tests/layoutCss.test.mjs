@@ -26,3 +26,21 @@ test("shows a fixed two-tab switcher on phone layouts", () => {
   assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*#app\[data-mobile-panel="groups"\]\s+\.bracket-section\s*{[^}]*display:\s*none/s);
   assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*#app\[data-mobile-panel="bracket"\]\s+\.groups-section\s*{[^}]*display:\s*none/s);
 });
+
+test("makes the phone header a single frameless sticky toolbar", () => {
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.topbar\s*{[^}]*position:\s*sticky/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.topbar\s*{[^}]*flex-direction:\s*row/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.topbar\s*{[^}]*border:\s*0/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.topbar\s*{[^}]*border-radius:\s*0/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.topbar\s*{[^}]*min-height:\s*40px/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.toolbar\s*{[^}]*flex-wrap:\s*nowrap/s);
+});
+
+test("keeps phone bracket rounds dense with two-column early rounds", () => {
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.bracket-section\s+\.section-heading\s*{[^}]*display:\s*none/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.bracket-scroll\s*{[^}]*padding:\s*8px/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.bracket-stage\[data-game-count="8"\]\s+\.stage-games\s*{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.bracket-stage\[data-game-count="4"\]\s+\.stage-games\s*{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.bracket-stage\[data-game-count="8"\]\s+\.match-card\s*{[^}]*min-height:\s*88px/s);
+  assert.doesNotMatch(css, /@media\s*\(max-width:\s*520px\)[\s\S]*\.bracket-stage\[data-game-count="8"\]\s+\.stage-games,[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s);
+});
