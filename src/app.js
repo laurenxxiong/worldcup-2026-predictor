@@ -22,6 +22,7 @@ const state = {
 };
 
 const elements = {
+  app: document.querySelector("#app"),
   statusDot: document.querySelector("#status-dot"),
   statusTitle: document.querySelector("#status-title"),
   statusDetail: document.querySelector("#status-detail"),
@@ -30,6 +31,7 @@ const elements = {
   bracketScroll: document.querySelector("#bracket-scroll"),
   refreshData: document.querySelector("#refresh-data"),
   resetOrder: document.querySelector("#reset-order"),
+  mobileTabs: [...document.querySelectorAll("[data-mobile-tab]")],
 };
 
 elements.refreshData.addEventListener("click", () => loadLiveData({ force: true }));
@@ -38,8 +40,37 @@ elements.resetOrder.addEventListener("click", () => {
   localStorage.removeItem(MANUAL_ORDER_KEY);
   render();
 });
+elements.mobileTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    activateMobilePanel(tab.dataset.mobileTab);
+    scrollMobilePanelIntoView(tab.dataset.mobileTab);
+  });
+});
+activateMobilePanel(elements.app.dataset.mobilePanel || "groups");
 
 loadLiveData();
+
+function activateMobilePanel(panel) {
+  if (!["groups", "bracket"].includes(panel)) return;
+
+  elements.app.dataset.mobilePanel = panel;
+  elements.mobileTabs.forEach((tab) => {
+    const isActive = tab.dataset.mobileTab === panel;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+}
+
+function scrollMobilePanelIntoView(panel) {
+  if (!window.matchMedia("(max-width: 760px)").matches) return;
+
+  const target = document.querySelector(`#${panel}-panel`);
+  target?.scrollIntoView({
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    block: "start",
+  });
+}
 
 async function loadLiveData() {
   setStatus("loading", "正在加载实时数据", "连接 FIFA 比赛接口中...");

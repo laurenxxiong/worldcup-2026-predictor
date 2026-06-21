@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
-    <div id="app">
+    <div id="app" data-mobile-panel="groups">
       <header class="topbar">
         <div>
           <p class="eyebrow">FIFA World Cup 2026</p>
@@ -29,7 +29,7 @@
       </section>
 
       <main class="layout">
-        <section class="groups-section" aria-labelledby="groups-title">
+        <section class="groups-section" id="groups-panel" role="tabpanel" aria-labelledby="groups-tab groups-title">
           <div class="section-heading">
             <div>
               <p class="eyebrow">Live Tables</p>
@@ -40,7 +40,7 @@
           <div class="groups-grid" id="groups-grid"></div>
         </section>
 
-        <section class="bracket-section" aria-labelledby="bracket-title">
+        <section class="bracket-section" id="bracket-panel" role="tabpanel" aria-labelledby="bracket-tab bracket-title">
           <div class="section-heading">
             <div>
               <p class="eyebrow">Knockout Path</p>
@@ -51,6 +51,31 @@
           <div class="bracket-scroll" id="bracket-scroll"></div>
         </section>
       </main>
+
+      <nav class="mobile-tabbar" role="tablist" aria-label="手机视图切换">
+        <button
+          class="mobile-tab is-active"
+          id="groups-tab"
+          type="button"
+          role="tab"
+          data-mobile-tab="groups"
+          aria-controls="groups-panel"
+          aria-selected="true"
+        >
+          小组排名
+        </button>
+        <button
+          class="mobile-tab"
+          id="bracket-tab"
+          type="button"
+          role="tab"
+          data-mobile-tab="bracket"
+          aria-controls="bracket-panel"
+          aria-selected="false"
+        >
+          淘汰赛
+        </button>
+      </nav>
     </div>
 
     <script type="module" src="./src/app.js"></script>

@@ -18,3 +18,11 @@ test("keeps desktop groups and bracket content scrolling inside their panels", (
   assert.match(css, /\.groups-grid\s*{[^}]*align-content:\s*start/s);
   assert.match(css, /\.groups-grid\s*{[^}]*grid-auto-rows:\s*max-content/s);
 });
+
+test("shows a fixed two-tab switcher on phone layouts", () => {
+  assert.match(css, /\.mobile-tabbar\s*{[^}]*display:\s*none/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.mobile-tabbar\s*{[^}]*display:\s*grid/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*\.mobile-tabbar\s*{[^}]*position:\s*fixed/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*#app\[data-mobile-panel="groups"\]\s+\.bracket-section\s*{[^}]*display:\s*none/s);
+  assert.match(css, /@media\s*\(max-width:\s*760px\)[\s\S]*#app\[data-mobile-panel="bracket"\]\s+\.groups-section\s*{[^}]*display:\s*none/s);
+});

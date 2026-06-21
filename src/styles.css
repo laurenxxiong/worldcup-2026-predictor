@@ -105,6 +105,33 @@ h3 {
   gap: 8px;
 }
 
+.mobile-tabbar {
+  display: none;
+}
+
+.mobile-tab {
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.mobile-tab.is-active {
+  background: var(--accent);
+  color: #17210a;
+  box-shadow: 0 12px 28px rgba(216, 255, 95, 0.18);
+}
+
+.mobile-tab:active {
+  transform: scale(0.98);
+}
+
 .primary-button,
 .ghost-button {
   min-height: 32px;
@@ -632,7 +659,7 @@ h3 {
 
 @media (max-width: 760px) {
   #app {
-    padding: 14px;
+    padding: 14px 14px calc(96px + env(safe-area-inset-bottom));
   }
 
   .topbar,
@@ -682,6 +709,34 @@ h3 {
 
   .route-connector::after {
     width: 42%;
+  }
+
+  #app[data-mobile-panel="groups"] .bracket-section {
+    display: none;
+  }
+
+  #app[data-mobile-panel="bracket"] .groups-section {
+    display: none;
+  }
+
+  .mobile-tabbar {
+    display: grid;
+    position: fixed;
+    right: 14px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 14px;
+    z-index: 20;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    max-width: 460px;
+    margin: 0 auto;
+    border: 1px solid rgba(202, 255, 226, 0.16);
+    border-radius: 999px;
+    padding: 5px;
+    background: rgba(7, 17, 13, 0.82);
+    box-shadow: 0 16px 46px rgba(0, 0, 0, 0.48);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
 }
 
