@@ -289,8 +289,10 @@ h3 {
   padding: 6px 8px;
   color: var(--muted);
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
@@ -300,7 +302,13 @@ h3 {
   background: rgba(216, 255, 95, 0.06);
 }
 
+.team-row.is-arming-drag {
+  border-color: rgba(216, 255, 95, 0.28);
+  background: rgba(216, 255, 95, 0.04);
+}
+
 .team-row.is-dragging {
+  cursor: grabbing;
   opacity: 0.45;
   transform: scale(0.98);
 }
