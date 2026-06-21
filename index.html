@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>世界杯淘汰赛预测台</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">FIFA World Cup 2026</p>
+          <h1>淘汰赛预测台</h1>
+        </div>
+        <div class="toolbar">
+          <button class="ghost-button" id="reset-order" type="button">重置排序</button>
+          <button class="primary-button" id="refresh-data" type="button">刷新数据</button>
+        </div>
+      </header>
+
+      <section class="status-panel" aria-live="polite">
+        <div>
+          <span class="status-dot" id="status-dot"></span>
+          <strong id="status-title">正在加载实时数据</strong>
+          <span id="status-detail">连接 FIFA 比赛接口中...</span>
+        </div>
+        <a id="source-link" href="https://api.fifa.com/api/v3/calendar/matches?language=en&count=120&idCompetition=17&from=2026-06-11&to=2026-06-29" target="_blank" rel="noreferrer">数据源</a>
+      </section>
+
+      <main class="layout">
+        <section class="groups-section" aria-labelledby="groups-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Live Tables</p>
+              <h2 id="groups-title">小组积分与可拖动排名</h2>
+            </div>
+            <p>拖动每组内的球队行，立即改变淘汰赛预测。</p>
+          </div>
+          <div class="groups-grid" id="groups-grid"></div>
+        </section>
+
+        <section class="bracket-section" aria-labelledby="bracket-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Knockout Path</p>
+              <h2 id="bracket-title">淘汰赛进程表</h2>
+            </div>
+            <p id="third-place-note">前二名自动入围，8 个最佳第三名按官方组合表分配。</p>
+          </div>
+          <div class="bracket-scroll" id="bracket-scroll"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
