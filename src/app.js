@@ -8,10 +8,10 @@ import {
   computeGroupStandings,
 } from "./worldCupLogic.js";
 
-const CACHE_KEY = "world-cup-2026-live-cache";
+const CACHE_KEY = "world-cup-2026-live-cache-v2";
 const MANUAL_ORDER_KEY = "world-cup-2026-manual-order";
 const LONG_PRESS_DRAG_DELAY_MS = 450;
-const LONG_PRESS_CANCEL_DISTANCE_PX = 10;
+const LONG_PRESS_CANCEL_DISTANCE_PX = 18;
 
 const state = {
   matches: [],
@@ -186,11 +186,32 @@ function renderTeamRow(group, team, index, total) {
   controls.append(up, down);
   row.appendChild(controls);
 
+  const startTouchDragIntent = (event) => {
+    if (event.target.closest("button") || event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+    cancelPendingPointerDrag();
+    state.pointerDrag = {
+      group,
+      teamId: team.id,
+      touchId: touch.identifier,
+      row,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      targetIndex: index,
+      activated: false,
+    };
+    row.classList.add("is-arming-drag");
+    state.longPressTimer = setTimeout(() => activateTouchDrag(touch.identifier), LONG_PRESS_DRAG_DELAY_MS);
+  };
+
   row.addEventListener("dragstart", (event) => event.preventDefault());
+  row.addEventListener("touchstart", startTouchDragIntent, { passive: true });
 
   row.addEventListener("pointerdown", (event) => {
     if (event.target.closest("button")) return;
     if (event.button !== undefined && event.button !== 0) return;
+    if (event.pointerType === "touch") return;
 
     cancelPendingPointerDrag();
     state.pointerDrag = {
@@ -226,19 +247,59 @@ document.addEventListener("pointermove", (event) => {
   if (!drag.activated) return;
 
   event.preventDefault();
+  updateDragTarget(event.clientX, event.clientY);
+});
+
+document.addEventListener("touchmove", handleTouchDragMove, { passive: false });
+document.addEventListener("touchend", handleTouchDragEnd);
+document.addEventListener("touchcancel", cancelPendingPointerDrag);
+
+document.addEventListener("pointerup", finishPointerDrag);
+document.addEventListener("pointercancel", cancelPendingPointerDrag);
+
+function handleTouchDragMove(event) {
+  const drag = state.pointerDrag;
+  if (!drag?.touchId && drag?.touchId !== 0) return;
+
+  const touch = findTouch(event.changedTouches, drag.touchId);
+  if (!touch) return;
+
+  const distance = Math.hypot(touch.clientX - drag.startX, touch.clientY - drag.startY);
+  if (!drag.activated && distance > LONG_PRESS_CANCEL_DISTANCE_PX) {
+    cancelPendingPointerDrag();
+    return;
+  }
+  if (!drag.activated) return;
+
+  if (drag.activated) event.preventDefault();
+  updateDragTarget(touch.clientX, touch.clientY);
+}
+
+function handleTouchDragEnd(event) {
+  const drag = state.pointerDrag;
+  if (!drag?.touchId && drag?.touchId !== 0) return;
+  if (!findTouch(event.changedTouches, drag.touchId)) return;
+
+  finishPointerDrag();
+}
+
+function updateDragTarget(clientX, clientY) {
+  const drag = state.pointerDrag;
+  if (!drag) return;
+
   document.querySelectorAll(".team-row.is-over").forEach((row) => row.classList.remove("is-over"));
 
   const targetRow = document
-    .elementsFromPoint(event.clientX, event.clientY)
+    .elementsFromPoint(clientX, clientY)
     .find((node) => node.classList?.contains("team-row") && node.dataset.group === drag.group);
 
   if (!targetRow) return;
   targetRow.classList.add("is-over");
   const rows = [...document.querySelectorAll(`.team-row[data-group="${drag.group}"]`)];
   drag.targetIndex = rows.indexOf(targetRow);
-});
+}
 
-document.addEventListener("pointerup", () => {
+function finishPointerDrag() {
   if (!state.pointerDrag) return;
 
   const drag = state.pointerDrag;
@@ -252,9 +313,7 @@ document.addEventListener("pointerup", () => {
   const fromIndex = current.findIndex((team) => team.id === drag.teamId);
   if (fromIndex < 0) return;
   moveTeam(drag.group, fromIndex, drag.targetIndex);
-});
-
-document.addEventListener("pointercancel", cancelPendingPointerDrag);
+}
 
 function activatePointerDrag(pointerId) {
   const drag = state.pointerDrag;
@@ -268,6 +327,17 @@ function activatePointerDrag(pointerId) {
   drag.row.setPointerCapture?.(pointerId);
 }
 
+function activateTouchDrag(touchId) {
+  const drag = state.pointerDrag;
+  if (!drag || drag.touchId !== touchId) return;
+
+  clearTimeout(state.longPressTimer);
+  state.longPressTimer = null;
+  drag.activated = true;
+  drag.row.classList.remove("is-arming-drag");
+  drag.row.classList.add("is-dragging");
+}
+
 function cancelPendingPointerDrag() {
   clearTimeout(state.longPressTimer);
   state.longPressTimer = null;
@@ -279,6 +349,10 @@ function clearPointerDragVisuals() {
   document.querySelectorAll(".team-row.is-arming-drag, .team-row.is-dragging, .team-row.is-over").forEach((row) => {
     row.classList.remove("is-arming-drag", "is-dragging", "is-over");
   });
+}
+
+function findTouch(touches, identifier) {
+  return [...touches].find((touch) => touch.identifier === identifier);
 }
 
 function moveTeam(group, fromIndex, toIndex) {

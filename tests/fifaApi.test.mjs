@@ -80,3 +80,29 @@ test("uses subdivision emoji flags for England and Scotland", () => {
   assert.notEqual(parsed[0].away.flagEmoji, "🏴");
   assert.equal([...parsed[0].away.flagEmoji].length, 7);
 });
+
+test("does not mark scheduled zero-zero fixtures as finished", () => {
+  const parsed = parseFifaMatches({
+    Results: [
+      {
+        GroupName: [{ Locale: "en-GB", Description: "Group A" }],
+        Home: { IdTeam: "MEX", ShortClubName: "Mexico", Abbreviation: "MEX" },
+        Away: { IdTeam: "KOR", ShortClubName: "Korea Republic", Abbreviation: "KOR" },
+        HomeTeamScore: 0,
+        AwayTeamScore: 0,
+        MatchStatus: 1,
+      },
+      {
+        GroupName: [{ Locale: "en-GB", Description: "Group A" }],
+        Home: { IdTeam: "RSA", ShortClubName: "South Africa", Abbreviation: "RSA" },
+        Away: { IdTeam: "CZE", ShortClubName: "Czechia", Abbreviation: "CZE" },
+        HomeTeamScore: 0,
+        AwayTeamScore: 0,
+        MatchStatus: 0,
+      },
+    ],
+  });
+
+  assert.equal(parsed[0].status, "scheduled");
+  assert.equal(parsed[1].status, "finished");
+});

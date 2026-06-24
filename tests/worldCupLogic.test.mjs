@@ -36,6 +36,33 @@ test("computes standings from completed group matches", () => {
   assert.equal(standings.A[3].name, "South Africa");
 });
 
+test("ignores scheduled fixtures when counting played matches and points", () => {
+  const standings = computeGroupStandings([
+    match("A", "Mexico", "South Africa", 2, 0),
+    {
+      ...match("A", "Mexico", "Korea Republic", 0, 0),
+      status: "scheduled",
+    },
+  ]);
+
+  assert.equal(standings.A.find((team) => team.name === "Mexico").played, 1);
+  assert.equal(standings.A.find((team) => team.name === "Mexico").points, 3);
+  assert.equal(standings.A.find((team) => team.name === "Korea Republic").played, 0);
+  assert.equal(standings.A.find((team) => team.name === "Korea Republic").points, 0);
+});
+
+test("uses standard football points for wins draws and losses", () => {
+  const standings = computeGroupStandings([
+    match("A", "Mexico", "South Africa", 2, 0),
+    match("A", "Korea Republic", "Czechia", 1, 1),
+  ]);
+
+  assert.equal(standings.A.find((team) => team.name === "Mexico").points, 3);
+  assert.equal(standings.A.find((team) => team.name === "Korea Republic").points, 1);
+  assert.equal(standings.A.find((team) => team.name === "Czechia").points, 1);
+  assert.equal(standings.A.find((team) => team.name === "South Africa").points, 0);
+});
+
 test("preserves team display metadata through standings", () => {
   const standings = computeGroupStandings([
     {

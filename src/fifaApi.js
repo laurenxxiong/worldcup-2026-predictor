@@ -65,6 +65,14 @@ function parseTeam(team = {}) {
 function normalizeStatus(match) {
   const homeScore = numberOrNull(match.HomeTeamScore ?? match.Home?.Score);
   const awayScore = numberOrNull(match.AwayTeamScore ?? match.Away?.Score);
+  const explicitStatus = match.MatchStatus ?? match.Status;
+
+  if (explicitStatus !== undefined && explicitStatus !== null && explicitStatus !== "") {
+    if (Number(explicitStatus) === 0 && Number.isFinite(homeScore) && Number.isFinite(awayScore)) return "finished";
+    if (match.MatchTime) return "live";
+    return "scheduled";
+  }
+
   if (Number.isFinite(homeScore) && Number.isFinite(awayScore)) return "finished";
   if (match.MatchTime) return "live";
   return "scheduled";
